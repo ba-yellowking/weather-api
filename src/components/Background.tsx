@@ -6,38 +6,47 @@ interface BackgroundProps {
 }
 
 function Background({ query }: BackgroundProps) {
-
   const API_KEY = import.meta.env.VITE_APP_PEXELS_API_KEY;
 
   useEffect(() => {
-
     if (!API_KEY) {
-      console.error("Weather API key is missing");
+      console.error("Pexels API key is missing");
       return;
     }
 
-    axios
-      .get(
-        `https://api.pexels.com/v1/search?query=${query}&orientation=landscape&color=white&per_page=80`, {
-          headers: {
-            Authorization: API_KEY,
+    const fetchAndPreloadBackground = async () => {
+      try {
+        const response = await axios
+          .get(`https://api.pexels.com/v1/search?query=${query}&orientation=landscape&color=white&per_page=5`, {
+            headers: {
+              Authorization: API_KEY,
+            },
           }
+        );
+
+        const photos = response.data.photos;
+        if (!photos || photos.length === 0) {
+          console.log("Images not found");
+          return;
         }
-      )
-      .then(response => {
-        if (response.data.photos && response.data.photos.length > 0) {
-          const randomImage = Math.floor(Math.random() * response.data.photos.length);
-          document.body.style.backgroundImage = `url(${response.data.photos[randomImage].src.original})`;
+
+        const randomIndex = Math.floor(Math.random() * photos.length);
+        const imageUrl = photos[randomIndex].src.original;
+
+        // preload
+        const img = new Image();
+        img.src = imageUrl;
+        img.onload = () => {
+          document.body.style.backgroundImage = `url(${imageUrl})`;
           document.body.style.backgroundSize = 'cover';
           document.body.style.backgroundPosition = 'center';
-        } else {
-          console.log("Images not found")
-        }
-      })
-      .catch(error => {
-        console.log(error)
-      })
+        };
+      } catch (error) {
+        console.error("Error loading Pexels image:", error);
+      }
+    };
 
+    fetchAndPreloadBackground();
   }, [query]);
 
   return null;

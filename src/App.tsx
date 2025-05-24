@@ -50,7 +50,7 @@ function App() {
 
   return (
     <div className="weather-container">
-      {<Background query={backgroundQuery} />}
+      {<Background query={`${backgroundQuery}`} />}
 
       <div className={`weather ${weatherData ? "expanded" : ""}`}>
         {weatherData ? (

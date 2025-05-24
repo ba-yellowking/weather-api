@@ -12,6 +12,7 @@ body {
   justify-content: center;
   align-items: center;
   background-color: #dcdcdc;
+  transition: background-image 0.3s ease-in-out;
 }
 
 .weather-container {
