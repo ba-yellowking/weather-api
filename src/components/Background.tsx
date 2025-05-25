@@ -18,7 +18,7 @@ function Background({ query, fallbackImage }: BackgroundProps) {
     const fetchAndPreloadBackground = async () => {
       try {
         const response = await axios
-          .get(`https://api.pexels.com/v1/search?query=${query}&orientation=landscape&color=white&per_page=7`, {
+          .get(`https://api.pexels.com/v1/search?query=${query}&orientation=landscape&color=white&per_page=10`, {
             headers: {
               Authorization: API_KEY,
             },
