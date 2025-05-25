@@ -10,33 +10,31 @@ import bg4 from "./assets/background-image/bg-image-4.jpg";
 import bg5 from "./assets/background-image/bg-image-5.jpg";
 import {getWeatherByCity} from "./services/GetWeather.tsx";
 
-function App() {
-  interface WeatherData {
-    name: string;
-    main: {
-      temp: number;
-      feels_like: number;
-    };
-    weather: {
-      main: string;
-      icon: string;
-    }[];
-  }
+export interface WeatherData {
+  name: string;
+  main: {
+    temp: number;
+    feels_like: number;
+  };
+  weather: {
+    main: string;
+    icon: string;
+  }[];
+}
 
-  type Fahrenheit = number;
+function App() {
 
   const localBackgrounds = [bg1, bg2, bg3, bg4, bg5];
 
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [city, setCity] = useState<string>("");
   const [backgroundQuery, setBackgroundQuery] = useState<string>("");
-  const [fallbackImage] = useState(() => {
-    return localBackgrounds[Math.floor(Math.random() * localBackgrounds.length)];
-  });
-  const [unit, setUnit] = useState("")
+
+  const [unit, setUnit] = useState<"metric" | "imperial">("metric");
 
   const toggleUnit = () => {
     setUnit(prev => prev === "metric" ? "imperial" : "metric");
+    console.log(unit)
   };
 
   const inputCity = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +67,7 @@ function App() {
 
   return (
     <div className="weather-container">
-      {weatherData && <Background query={backgroundQuery} fallbackImage={fallbackImage} />}
+      {weatherData && <Background query={backgroundQuery} />}
 
       <div className={`weather ${weatherData ? "expanded" : ""}`}>
         {weatherData ? (
@@ -81,7 +79,7 @@ function App() {
                 toggleUnit();
                 if (city) getWeather();
               }}>
-                {unit === "metric" ? "°F" : "°C"}
+                {unit === "metric" ? "°C" : "°F"}
               </div>
 
             </div>
