@@ -32,11 +32,6 @@ function App() {
 
   const [unit, setUnit] = useState<"metric" | "imperial">("metric");
 
-  const toggleUnit = () => {
-    setUnit(prev => prev === "metric" ? "imperial" : "metric");
-    console.log(unit)
-  };
-
   const inputCity = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCity(e.target.value);
   };
@@ -47,6 +42,7 @@ function App() {
     }
   };
 
+  // useEffect for randomly changing local background images
   useEffect(() => {
     const randomBg = localBackgrounds[Math.floor(Math.random() * localBackgrounds.length)];
     document.body.style.backgroundImage = `url(${randomBg})`;
@@ -54,6 +50,19 @@ function App() {
     document.body.style.backgroundPosition = 'center';
     document.body.style.transition = 'background-image 0.5s ease';
   }, []);
+
+
+  const toggleUnit = () => {
+    setUnit(prev => prev === "metric" ? "imperial" : "metric");
+    console.log(unit)
+  };
+  // useEffect for switch from metric C to imperial F
+  useEffect(() => {
+    if (weatherData) {
+      getWeather();
+    }
+  }, [unit]);
+
 
   const getWeather = () => {
     getWeatherByCity(city, unit)
@@ -75,20 +84,15 @@ function App() {
             <div className="weather__header">
               <p className="selected-city">{weatherData.name}</p>
 
-              <div className="unit" onClick={() => {
-                toggleUnit();
-                if (city) getWeather();
-              }}>
-                {unit === "metric" ? "°C" : "°F"}
+              <div className="unit" onClick={toggleUnit}>
+                {unit === "metric" ? "°F" : "°C"}
               </div>
 
             </div>
 
             <div className="weather__body">
               <p className="temp">
-                {unit === "metric"
-                  ? `${Math.floor(weatherData.main.temp)}°C`
-                  : `${Math.floor(weatherData.main.temp)}°F`}
+                {`${Math.floor(weatherData.main.temp)}${unit === "metric" ? "°C" : "°F"}`}
               </p>
             </div>
 
