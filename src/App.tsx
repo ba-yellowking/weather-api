@@ -1,7 +1,13 @@
 import './App.css';
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import Background from "./components/Background.tsx";
+
+import bg1 from "./assets/background-image/bg-image-1.jpg";
+import bg2 from "./assets/background-image/bg-image-2.jpg";
+import bg3 from "./assets/background-image/bg-image-3.jpg";
+import bg4 from "./assets/background-image/bg-image-4.jpg";
+import bg5 from "./assets/background-image/bg-image-5.jpg";
 
 function App() {
 
@@ -19,9 +25,15 @@ function App() {
 
   type Fahrenheit = number;
 
+  const localBackgrounds = [bg1, bg2, bg3, bg4, bg5];
+
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [city, setCity] = useState<string>("");
-  const [backgroundQuery, setBackgroundQuery] = useState<string>("nature");
+  const [backgroundQuery, setBackgroundQuery] = useState<string>("");
+
+  const [fallbackImage] = useState(() => {
+    return localBackgrounds[Math.floor(Math.random() * localBackgrounds.length)];
+  });
 
   const toFahrenheit = (celsius: number): Fahrenheit =>
     Math.round((celsius * 9) / 5 + 32);
@@ -29,6 +41,15 @@ function App() {
   const inputCity = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCity(e.target.value);
   };
+
+  // default local background
+  useEffect(() => {
+    const randomBg = localBackgrounds[Math.floor(Math.random() * localBackgrounds.length)];
+    document.body.style.backgroundImage = `url(${randomBg})`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.transition = 'background-image 0.5s ease';
+  }, []);
 
   const getWeather = () => {
 
@@ -50,7 +71,12 @@ function App() {
 
   return (
     <div className="weather-container">
-      {<Background query={`${backgroundQuery}`} />}
+      {weatherData &&
+        <Background
+          query={backgroundQuery}
+          fallbackImage={fallbackImage}
+        />
+      }
 
       <div className={`weather ${weatherData ? "expanded" : ""}`}>
         {weatherData ? (
