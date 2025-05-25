@@ -81,3 +81,7 @@ body {
   padding: 5px;
   color: #5c5c5c;
 }
+
+.hidden {
+  display: none;
+}

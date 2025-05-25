@@ -29,8 +29,8 @@ function App() {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [city, setCity] = useState<string>("");
   const [backgroundQuery, setBackgroundQuery] = useState<string>("");
-
   const [unit, setUnit] = useState<"metric" | "imperial">("metric");
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputCity = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCity(e.target.value);
@@ -64,14 +64,17 @@ function App() {
   }, [unit]);
 
 
-  const getWeather = () => {
-    getWeatherByCity(city, unit)
-      .then(data => {
-        console.log(data)
-        setWeatherData(data);
-        setBackgroundQuery(city);
-      })
-      .catch(error => console.error(error));
+  const getWeather = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getWeatherByCity(city, unit);
+      setWeatherData(data);
+      setBackgroundQuery(city);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -91,7 +94,7 @@ function App() {
             </div>
 
             <div className="weather__body">
-              <p className="temp">
+              <p className={isLoading ? "hidden" : "temp"}>
                 {`${Math.floor(weatherData.main.temp)}${unit === "metric" ? "°C" : "°F"}`}
               </p>
             </div>
