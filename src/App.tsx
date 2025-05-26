@@ -68,6 +68,7 @@ function App() {
     setIsLoading(true);
     try {
       const data = await getWeatherByCity(city, unit);
+      console.log(data)
       setWeatherData(data);
       setBackgroundQuery(city);
     } catch (error) {
@@ -85,7 +86,14 @@ function App() {
         {weatherData ? (
           <>
             <div className="weather__header">
-              <p className="selected-city">{weatherData.name}</p>
+              <div className="header-left">
+                <p className="selected-city">{weatherData.name}</p>
+                <img
+                  src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+                  alt={weatherData.weather[0].main}
+                  className="weather-icon"
+                />
+              </div>
 
               <div className="unit" onClick={toggleUnit}>
                 {unit === "metric" ? "°F" : "°C"}
@@ -94,9 +102,19 @@ function App() {
             </div>
 
             <div className="weather__body">
-              <p className={isLoading ? "hidden" : "temp"}>
-                {`${Math.floor(weatherData.main.temp)}${unit === "metric" ? "°C" : "°F"}`}
-              </p>
+              <div className="body-left">
+                <div className={`temp ${isLoading ? "hidden" : ""}`}>
+                  {Math.floor(weatherData.main.temp)}{unit === "metric" ? "°C" : "°F"}
+                </div>
+              </div>
+              <div className="body-right">
+                <p className={`feels-like ${isLoading ? "hidden" : ""}`}>
+                  {`Feels like: ${weatherData.main.feels_like} ${unit === "metric" ? "°C" : "°F"}`}
+                </p>
+                <p className={`wind-speed ${isLoading ? "hidden" : ""}`}>
+                  {`Wind speed: ${weatherData.wind.speed} ${unit === "metric" ? "m/s" : "mi/h"}`}
+                </p>
+              </div>
             </div>
 
             <div className="weather__footer">
