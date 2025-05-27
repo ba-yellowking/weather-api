@@ -5,17 +5,18 @@ interface InputCityProps {
   inputCity: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   getWeather: () => void;
+  error: boolean;
 }
 
-function InputCity({ city, inputCity, handleKeyDown, getWeather }: InputCityProps) {
+function InputCity({ city, inputCity, handleKeyDown, getWeather, error }: InputCityProps) {
   return (
     <div className="input-container">
       <input
         type="text"
         placeholder="Enter a city"
-        value={city}
+        value={`${error ? "Sorry, can't find this city" : city}`}
         onChange={inputCity}
-        className="input-area"
+        className={`input-area ${error ? "not-found" : ""}`}
         onKeyDown={handleKeyDown}
       />
       <button className="button-weather" onClick={getWeather}>

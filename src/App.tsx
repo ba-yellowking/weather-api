@@ -35,6 +35,7 @@ function App() {
   const [backgroundQuery, setBackgroundQuery] = useState<string>("");
   const [unit, setUnit] = useState<"metric" | "imperial">("metric");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const inputCity = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCity(e.target.value);
@@ -77,6 +78,7 @@ function App() {
       setBackgroundQuery(city);
     } catch (error) {
       console.error(error);
+      setError(true);
     } finally {
       setIsLoading(false);
     }
@@ -123,11 +125,23 @@ function App() {
             </div>
 
             <div className="weather__footer">
-              <InputCity city={city} inputCity={inputCity} handleKeyDown={handleKeyDown} getWeather={getWeather}/>
+              <InputCity
+                city={city}
+                inputCity={inputCity}
+                handleKeyDown={handleKeyDown}
+                getWeather={getWeather}
+                error={error}
+              />
             </div>
           </>
         ) : (
-          <InputCity city={city} inputCity={inputCity} handleKeyDown={handleKeyDown} getWeather={getWeather}/>
+          <InputCity
+            city={city}
+            inputCity={inputCity}
+            handleKeyDown={handleKeyDown}
+            getWeather={getWeather}
+            error={error}
+          />
         )}
       </div>
     </div>
