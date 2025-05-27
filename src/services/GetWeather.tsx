@@ -6,4 +6,5 @@ export const getWeatherByCity = async (city: string, unit: "metric" | "imperial"
     `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unit}&appid=${API_KEY}`
   );
   return response.data;
+  // посмотреть response
 };

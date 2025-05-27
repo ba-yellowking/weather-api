@@ -1,95 +1,57 @@
 import './App.css';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Background from "./components/Background.tsx";
 import InputCity from "./components/inputCity/InputCity.tsx";
-
-import bg1 from "./assets/background-image/bg-image-1.jpg";
-import bg2 from "./assets/background-image/bg-image-2.jpg";
-import bg3 from "./assets/background-image/bg-image-3.jpg";
-import bg4 from "./assets/background-image/bg-image-4.jpg";
-import bg5 from "./assets/background-image/bg-image-5.jpg";
 import {getWeatherByCity} from "./services/GetWeather.tsx";
-
-export interface WeatherData {
-  name: string;
-  main: {
-    temp: number;
-    feels_like: number;
-  };
-  weather: {
-    main: string;
-    icon: string;
-    description: string;
-  }[];
-  wind: {
-    speed: number;
-  }
-}
+import {WeatherData} from "./types/weather";
+import { createHandlers } from "./handlers/WeatherHandlers.tsx";
+import RandomLocalBackground from "./assets/background-image/BackgroundImage.tsx";
+import {useToggleUnits} from "./assets/hooks/useToggleUnits.ts";
+import {FormatDate} from "./utils/FormatDate.ts";
 
 function App() {
-
-  const localBackgrounds = [bg1, bg2, bg3, bg4, bg5];
 
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [city, setCity] = useState<string>("");
   const [backgroundQuery, setBackgroundQuery] = useState<string>("");
-  const [unit, setUnit] = useState<"metric" | "imperial">("metric");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const inputCity = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCity(e.target.value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      getWeather();
-    }
-  };
-
-  // useEffect for randomly changing local background images
-  useEffect(() => {
-    const randomBg = localBackgrounds[Math.floor(Math.random() * localBackgrounds.length)];
-    document.body.style.backgroundImage = `url(${randomBg})`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.transition = 'background-image 0.5s ease';
-  }, []);
+  const { unit, toggleUnit } = useToggleUnits(weatherData, setWeatherData, setError);
 
 
-  const toggleUnit = () => {
-    setUnit(prev => prev === "metric" ? "imperial" : "metric");
-    console.log(unit)
-  };
-  // useEffect for switch from metric C to imperial F
-  useEffect(() => {
-    if (weatherData) {
-      getWeather();
-    }
-  }, [unit]);
-
-
-  const getWeather = async () => {
+  const fetchWeather = async () => {
     setIsLoading(true);
     try {
       const data = await getWeatherByCity(city, unit);
       console.log(data)
       setWeatherData(data);
       setBackgroundQuery(city);
+      setError(false);
     } catch (error) {
       console.error(error);
+      setCity("")
       setError(true);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const { handleCityChange, handleKeyDown } = createHandlers(fetchWeather, setCity);
+
+  // date
+  let formattedDate = "";
+  if (weatherData) {
+    formattedDate = FormatDate(weatherData.dt)
+  }
+
   return (
     <div className="weather-container">
+      <RandomLocalBackground />
       {weatherData && <Background query={backgroundQuery} />}
 
       <div className={`weather ${weatherData ? "expanded" : ""}`}>
-        {weatherData ? (
+        {weatherData && (
           <>
             <div className="weather__header">
               <div className="header-left">
@@ -102,10 +64,11 @@ function App() {
                 <p className="weather-description">{weatherData.weather[0].description}</p>
               </div>
 
+              <p className="date">{formattedDate}</p>
+
               <div className="unit" onClick={toggleUnit}>
                 {unit === "metric" ? "°F" : "°C"}
               </div>
-
             </div>
 
             <div className="weather__body">
@@ -116,33 +79,25 @@ function App() {
               </div>
               <div className="body-right">
                 <p className={`feels-like ${isLoading ? "hidden" : ""}`}>
-                  {`Feels like: ${weatherData.main.feels_like} ${unit === "metric" ? "°C" : "°F"}`}
+                  Feels like: {weatherData.main.feels_like} {unit === "metric" ? "°C" : "°F"}
                 </p>
                 <p className={`wind-speed ${isLoading ? "hidden" : ""}`}>
-                  {`Wind speed: ${weatherData.wind.speed} ${unit === "metric" ? "m/s" : "mi/h"}`}
+                  Wind speed: {weatherData.wind.speed} {unit === "metric" ? "m/s" : "mi/h"}
                 </p>
               </div>
             </div>
-
-            <div className="weather__footer">
-              <InputCity
-                city={city}
-                inputCity={inputCity}
-                handleKeyDown={handleKeyDown}
-                getWeather={getWeather}
-                error={error}
-              />
-            </div>
           </>
-        ) : (
+        )}
+
+        <div className="weather__footer">
           <InputCity
             city={city}
-            inputCity={inputCity}
+            handleCityChange={handleCityChange}
             handleKeyDown={handleKeyDown}
-            getWeather={getWeather}
+            fetchWeather={fetchWeather}
             error={error}
           />
-        )}
+        </div>
       </div>
     </div>
   );

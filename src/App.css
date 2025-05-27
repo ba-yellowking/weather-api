@@ -69,6 +69,10 @@ body {
   padding: 10px;
   cursor: pointer;
 }
+.date {
+  color: #ffffff;
+  font-size: 2rem;
+}
 
 
 .weather__footer {
@@ -86,9 +90,9 @@ body {
   width: 100%;
 }
 .temp {
-  font-size: 8rem;
+  font-size: 10rem;
   padding: 50px;
-  color: #5c5c5c;
+  color: #303030;
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
 }
@@ -126,5 +130,5 @@ body {
 
 .weather-description {
   color: #ffffff;
-  font-size: 2rem;
+  font-size: 1rem;
 }
