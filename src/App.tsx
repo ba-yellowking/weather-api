@@ -19,7 +19,11 @@ export interface WeatherData {
   weather: {
     main: string;
     icon: string;
+    description: string;
   }[];
+  wind: {
+    speed: number;
+  }
 }
 
 function App() {
@@ -93,6 +97,7 @@ function App() {
                   alt={weatherData.weather[0].main}
                   className="weather-icon"
                 />
+                <p className="weather-description">{weatherData.weather[0].description}</p>
               </div>
 
               <div className="unit" onClick={toggleUnit}>

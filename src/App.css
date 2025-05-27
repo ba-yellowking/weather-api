@@ -37,6 +37,9 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  border-radius: 10px;
 }
 
 
@@ -46,7 +49,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #5c5c5c;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(5px);
 }
 .header-left {
   display: flex;
@@ -72,7 +76,6 @@ body {
   justify-content: space-between;
   width: 100%;
   height: 50px;
-  background-color: #E1E1E1;
 }
 
 .weather__body {
@@ -92,6 +95,7 @@ body {
 .feels-like, .wind-speed {
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
+  color: #303030;
 }
 
 .hidden {
@@ -113,4 +117,14 @@ body {
 }
 .body-right p {
   padding: 10px;
+}
+
+.weather-icon {
+  width: 67px;
+  height: 67px;
+}
+
+.weather-description {
+  color: #ffffff;
+  font-size: 2rem;
 }
